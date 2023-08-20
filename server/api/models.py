@@ -15,7 +15,7 @@ class Region(models.Model):
 class GDP(models.Model):
     id = models.AutoField(primary_key=True)
     created_at = models.DateField()
-    value = models.DecimalField(max_digits=10, decimal_places=2)  # NUMERIC в PostgreSQL
+    value = models.BigIntegerField()  # NUMERIC в PostgreSQL
     period = models.CharField(max_length=100)
     description = models.CharField(max_length=200)
     updated_at = models.DateField()
