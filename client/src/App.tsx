@@ -1,8 +1,8 @@
 import {  useEffect } from 'react'
+import { BrowserRouter } from "react-router-dom";
 
 import './App.css'
-import MainPage from './pages/MainPage/MainPage';
-import Navbar from './widgets/Navbar/Navbar';
+import AppRoutes from './Routes/AppRoutes';
 function App() {
   
   useEffect(() => {
@@ -11,8 +11,9 @@ function App() {
 
   return (
     <>
-     <Navbar />
-     <MainPage />
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
     </>
   )
 }

@@ -4,8 +4,8 @@ type Props = {};
 
 const MainPage = (_props: Props) => {
   const array = [{ title: "test1", link: "test1" }];
-  const items = array.map((item) => {
-    return <EconomyItem title={item.title} link={item.link} />;
+  const items = array.map((item,index) => {
+    return <EconomyItem key={index} title={item.title} link={item.link} />;
   });
   return (
     <div className="main">

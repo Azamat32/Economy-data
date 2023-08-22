@@ -7,7 +7,7 @@
     padding: 10px 10px;
     .nav_logo_img {
       width: 80px;
-      img{
+      img {
         width: 100%;
         object-fit: cover;
       }
@@ -21,24 +21,56 @@
       }
     }
 
-    .nav_download {
-      display: flex;
-      gap: 20px;
-        a {
-            border-radius: 10px;
-            text-decoration: none;
-            color: #525f6c;
-            background: #fff;
-            border: 1px solid #525f6c;
+    .nav_text {
+      p {
+        color: #fff;
+        font-size: 20px;
+        max-width: 400px;
+        text-align: right;
+      }
+    }
 
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: 0.4s;
-            &:hover {
-            background: rgb(255, 221, 221);
-            color: #525f6c;
-            }
+    .nav_btn {
+      position: relative;
+      width: 30px;
+      height: 30px;
+      display: block;
+      cursor: pointer;
+      z-index: 20;
+      span {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background: #fff;
+        transition: 0.4s;
+      }
+      &::after,
+      &::before {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        content: "";
+        background: #fff;
+        transition: 0.4s;
+      }
+      &::after {
+        top: 10px;
+      }
+      &::before {
+        top: 20px;
+      }
+      &.active {
+        span {
+          width: 0%;
         }
+        &::after {
+          transform: rotate(45deg);
+        }
+        &::before {
+          top: 10px;
+          transform: rotate(135deg);
+        }
+      }
     }
   }
 }

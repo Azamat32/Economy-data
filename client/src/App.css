@@ -8,3 +8,6 @@ body{
   width: 100%;
   max-width:1440px;
 }
+p{
+  margin: 0;
+}
