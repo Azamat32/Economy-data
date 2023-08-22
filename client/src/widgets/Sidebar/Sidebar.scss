@@ -1,0 +1,32 @@
+.sidebar{
+    position: fixed;
+    z-index: 11;
+    left: 0;
+    top: 0;
+    width: 340px;
+    height: 100%;
+    transition: 0.4s;
+    background: #343a40;
+    transform: translateX(-100%);
+    transition: transform 0.4s ease-in-out;
+  
+    .sidebar_inner{
+        padding-top: 100px;
+        ul{
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            li{
+                list-style-type: none;
+                a{
+                    color: #fff;
+                    font-size: 20px;
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+    &.open {
+        transform: translateX(0);
+      }
+}
