@@ -12,7 +12,6 @@ const MainPage = (_props: Props) => {
       <div className="container">
         <div className="main_inner">
         {items}
-
         </div>
       </div>
     </div>

@@ -14,13 +14,13 @@ const Navbar = (_props: Props) => {
     <div className="navbar">
       <div className="container">
         <div className="nav_inner">
-          <div
-            className={`nav_btn ${isOpen ? "active" : ""}`}
-            onClick={handleBasketClose}
-          >
-            <span></span>
-          </div>
           <div className="nav_logo">
+            <div
+              className={`nav_btn ${isOpen ? "active" : ""}`}
+              onClick={handleBasketClose}
+            >
+              <span></span>
+            </div>
             <a href="">
               <div className="nav_logo_img">
                 <img
