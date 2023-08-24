@@ -88,7 +88,6 @@ DATABASES = {
         'NAME': config['database']['name'],
         'USER': config['database']['user'],
         'PASSWORD': config['database']['password'],
-        # ...
     }
 }
 
