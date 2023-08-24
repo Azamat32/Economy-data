@@ -13,6 +13,9 @@
       }
     }
     .nav_logo {
+      display: flex;
+      align-items: center;
+      gap: 30px;
       a {
         display: flex;
         gap: 15px;
