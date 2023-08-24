@@ -52,21 +52,28 @@ class LaborProductivity(models.Model):
         db_table = 'labor_productivity'
         managed = False
     
-    #######################################################
-class ContentName(models.Model):
-     id = models.AutoField(primary_key=True)
-     name = models.CharField(max_length=200)
+    
 
-     def __str__(self):
+class Topic(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200, unique=True)
+
+    class Meta:
+        db_table = 'topics'
+        managed = False
+
+    def __str__(self):
         return self.name
 
-class IndicatorsName(models.Model):
-     id = models.AutoField(primary_key=True)
-     name = models.CharField(max_length=200)
-     link = models.CharField(max_length=200)
-     macro_id = models.ForeignKey(ContentName, on_delete=models.CASCADE,  related_name='indicators')
+class EconomicIndex(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200)
+    link = models.CharField(max_length=200)
+    macro = models.ForeignKey(Topic, on_delete=models.CASCADE)
 
-     def __str__(self):
+    class Meta:
+        db_table = 'economic_indices'
+        managed = False
+
+    def __str__(self):
         return self.name
-
-

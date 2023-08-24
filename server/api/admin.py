@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ContentName, IndicatorsName
+from .models import Topic, EconomicIndex
 
-admin.site.register(ContentName)
-admin.site.register(IndicatorsName)
+admin.site.register(Topic)
+admin.site.register(EconomicIndex)

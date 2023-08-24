@@ -1,27 +1,16 @@
 from rest_framework import serializers
-from .models import GDP, Region, IndicatorsName, ContentName
+from .models import GDP, Region, Topic, EconomicIndex
 
-class RegionSerializer(serializers.ModelSerializer):
+class TopicSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Region
+        model = Topic
         fields = '__all__'
 
-class GDPSerializer(serializers.ModelSerializer):
-    region = RegionSerializer()
-
+class EconomicIndexSerializer(serializers.ModelSerializer):
+    macro = TopicSerializer() 
     class Meta:
-        model = GDP
+        model = EconomicIndex
         fields = '__all__'
 
 
-class ContentNameSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ContentName
-        fields = '__all__'
-
-class IndicatorsNameSerializer(serializers.ModelSerializer):
-    macro_id = ContentNameSerializer() 
-    class Meta:
-        model = IndicatorsName
-        fields = '__all__'
 
