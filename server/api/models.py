@@ -53,3 +53,20 @@ class LaborProductivity(models.Model):
         managed = False
     
     #######################################################
+class ContentName(models.Model):
+     id = models.AutoField(primary_key=True)
+     name = models.CharField(max_length=200)
+
+     def __str__(self):
+        return self.name
+
+class IndicatorsName(models.Model):
+     id = models.AutoField(primary_key=True)
+     name = models.CharField(max_length=200)
+     link = models.CharField(max_length=200)
+     macro_id = models.ForeignKey(ContentName, on_delete=models.CASCADE)
+
+     def __str__(self):
+        return self.name
+
+

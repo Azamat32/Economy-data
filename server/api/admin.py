@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import ContentName, IndicatorsName
 
-# Register your models here.
+admin.site.register(ContentName)
+admin.site.register(IndicatorsName)
