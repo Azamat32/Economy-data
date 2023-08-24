@@ -1,6 +1,7 @@
 import { Suspense } from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate ,useLocation } from "react-router-dom";
 import AdminPage from "../pages/AdminPage/AdminPage";
+import AutorizationPage from "../pages/AutorizationPage/AutorizationPage";
 import ConstructorPage from "../pages/ConstructorPage/ConstructorPage";
 import HelpPage from "../pages/HelpPage/HelpPage";
 import MainPage from "../pages/MainPage/MainPage";
@@ -13,11 +14,18 @@ import Navbar from "../widgets/Navbar/Navbar";
 type Props = {}
 
 const AppRoutes = (props: Props) => {
+  const location = useLocation();
+
+
+  // Check if the current location is the DashboardPage
+  const isAutorize = location.pathname === "/autorize";
+
   return (
     <>
+     {isAutorize ? null : <Navbar />}
   <Suspense fallback={<Loader />}>
-    <Navbar />
     <Routes>
+      <Route path="/autorize" element={<AutorizationPage/> } />
       <Route path="/" element={<MainPage />} />
       <Route path="/notification" element={<NotificationPage />} />
       <Route path="/reports" element={<ReportPage />} />
