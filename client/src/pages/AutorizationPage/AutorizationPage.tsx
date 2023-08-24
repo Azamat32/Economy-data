@@ -1,5 +1,5 @@
 import { SetStateAction, useState } from "react";
-
+import "./AutorizationPage.scss"
 type Props = {};
 import Login from "./Login/Login";
 import Register from "./Register/Register";

@@ -8,6 +8,13 @@ const User = sequelize.define("users", {
     primaryKey: true,
     autoIncrement: true,
   },
+  email: {
+    // Add this new property for the email column
+    type: DataTypes.STRING,
+    allowNull: false, // or false if email is required
+    unique: true, // If you want emails to be unique
+  },
+
   username: {
     type: DataTypes.STRING,
     allowNull: true,
