@@ -1,8 +1,9 @@
-from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import EconomicIndex, Topic
-from .serializer import  EconomicIndexSerializer
+from .serializer import  EconomicIndexSerializer, TopicSerializer, EconomicIndicesSerializer
+from django.http import JsonResponse
+import json
 
 def populate_data():
     content_data = [
@@ -78,7 +79,6 @@ def populate_data():
     (59, "Международные рейтинги", "Link 59", 8),
 ]
 
-        # Заполнение модели Topic
     for topic_name in content_data:
         topic, created = Topic.objects.get_or_create(name=topic_name.upper())
         if created:
@@ -86,7 +86,6 @@ def populate_data():
         else:
             print(f"Тема уже существует: {topic_name}")
 
-    # Заполнение модели EconomicIndex
     for index_id, index_name, index_link, topic_id in indicators_data:
         topic = Topic.objects.get(name=content_data[topic_id - 1].upper())
         index_name_upper = index_name.upper()
@@ -104,6 +103,49 @@ def index(request):
     if request.method == 'GET':
         #EconomicIndex.objects.all().delete()
         #Topic.objects.all().delete()
+        populate_data()
+        content_names = EconomicIndex.objects.select_related('macro').all()
+        print(content_names)
+        serializer = EconomicIndexSerializer(content_names, many=True)
+        
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def get_topics(request):
+    if request.method == 'GET':
+        topics = Topic.objects.all()
+        #print(content_names)
+        serializer = TopicSerializer(topics, many=True)
+        
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def get_economic_indices(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            macro_id = data.get('id')
+            print(macro_id)
+            if macro_id is not None:
+                try:
+                    macro = Topic.objects.get(id=macro_id)
+                    related_indices = EconomicIndex.objects.filter(macro=macro)
+                    serializer = EconomicIndexSerializer(related_indices, many=True)
+                    return Response(serializer.data)
+                except Topic.DoesNotExist:
+                    return JsonResponse({"error": "Macro with the specified ID does not exist."}, status=404)
+            else:
+                return JsonResponse({"error": "Macro ID parameter is missing."}, status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data in the request body."}, status=400)
+    
+    return JsonResponse({"error": "Invalid request method."}, status=405)
+
+@api_view(['GET'])
+def get_economic_index(request):
+    if request.method == 'GET':
+        EconomicIndex.objects.all().delete()
+        Topic.objects.all().delete()
         populate_data()
         content_names = EconomicIndex.objects.select_related('macro').all()
         #print(content_names)

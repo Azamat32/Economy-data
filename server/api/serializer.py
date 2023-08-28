@@ -12,5 +12,10 @@ class EconomicIndexSerializer(serializers.ModelSerializer):
         model = EconomicIndex
         fields = '__all__'
 
+class EconomicIndicesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EconomicIndex
+        fields = '__all__' 
+
 
 
