@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import GDP, Region, Topic, EconomicIndex
+from .models import Topic, EconomicIndex
 
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
