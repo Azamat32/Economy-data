@@ -4,7 +4,7 @@ import psycopg2
 db_settings = {
     'dbname': 'data_gdp_labor',
     'user': 'postgres',
-    'password': '123456789',
+    'password': '',
     # 'host': 'localhost',
     # 'port': '5432'
 }
