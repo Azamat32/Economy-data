@@ -1,15 +1,17 @@
-import { useEffect , useState} from "react";
+import { useEffect, useState } from "react";
 import EconomyItem from "../../widgets/EconomyItem/EconomyItem";
-import "./MainPage.scss"
+import "./MainPage.scss";
 type Props = {};
 type Item = {
-  title: string;
+  macro: {
+    id: number;
+    name: string;
+  };
+  name: string;
   link: string;
 };
 
-
 const MainPage = (_props: Props) => {
-
   const [items, setItems] = useState<Item[]>([]);
 
   useEffect(() => {
@@ -29,12 +31,18 @@ const MainPage = (_props: Props) => {
     }
   };
   console.log(items);
-  
+  let tables = items.map((item) => {
+    return (
+      <>
+        <div className="title">{item.macro.name} : </div>
+        <div className="text">{item.name}</div>
+      </>
+    );
+  });
   return (
     <div className="main">
       <div className="container">
-        <div className="main_inner">
-        </div>
+        <div className="main_inner">{tables}</div>
       </div>
     </div>
   );
