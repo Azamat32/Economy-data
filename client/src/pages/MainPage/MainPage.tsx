@@ -14,6 +14,7 @@ const MainPage = (_props: Props) => {
   useEffect(() => {
     fetchData();
   }, []);
+  
   const handleClick = async (id: number) => {
     try {
       const response = await axios.post(
@@ -41,6 +42,7 @@ const MainPage = (_props: Props) => {
       console.error("Error fetching data:", error);
     }
   };
+
   let tables = tablesTitle.map((item) => {
     return (
         <div onClick={() => handleClick(item.id)} className="title" key={item.id}>{item.name} </div>
