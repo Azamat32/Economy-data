@@ -3,6 +3,18 @@
         margin: 200px auto;
         padding: 0 10px;
         max-width: 650px;
-
+        .title{
+            border-radius: 10px;
+            border: 1px solid #343434;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            &:hover{
+                background: #343434;
+                color: #fff;
+            }
+        }
     }
 }
