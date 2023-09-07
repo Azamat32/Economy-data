@@ -1,18 +1,33 @@
 from django.db import models
+from django.urls import reverse
 
-    
+
 class Topic(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=128, verbose_name="Название разделала")
+    
 
     def __str__(self):
-        return self.name
+        return f"Название раздела: {self.name}"
+    
 
-class EconomicIndex(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=200)
-    link = models.CharField(max_length=200)
-    macro = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    def get_absolute_url(self):
+        return reverse("topic", kwargs={"topic_id":self.pk})
+    
 
+    # class Meta:
+    #     verbose_name = "Задания"
+    #     verbose_name_plural = "Задания"
+    #     ordering = ["name"]
+
+
+class Economic_index(models.Model):
+    name = models.CharField(max_length=255)
+    path = models.CharField(max_length=255, null=True)
+    macro_topic = models.ForeignKey("Topic", on_delete=models.PROTECT)
+    
     def __str__(self):
-        return self.name
+        return f"Название экономического показателя: {self.name}"
+    
+    
+    # def get_absolute_url(self):
+    #     return reverse("", kwargs={"topic_id":self.pk})

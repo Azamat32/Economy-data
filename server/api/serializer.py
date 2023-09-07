@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Topic, EconomicIndex
+from .models import Topic, Economic_index
 
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,15 +7,10 @@ class TopicSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class EconomicIndexSerializer(serializers.ModelSerializer):
-    macro = TopicSerializer() 
     class Meta:
-        model = EconomicIndex
+        model = Economic_index
         fields = '__all__'
 
-class EconomicIndicesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = EconomicIndex
-        fields = '__all__' 
 
 
 
