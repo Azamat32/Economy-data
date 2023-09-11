@@ -1,19 +1,22 @@
 import {  useEffect } from 'react'
 import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import './App.css'
 import AppRoutes from './Routes/AppRoutes';
 function App() {
   
-  useEffect(() => {
-   
-  }, [])
+
+  const queryClient = new QueryClient();
 
   return (
     <>
-      <BrowserRouter>
+     <QueryClientProvider client={queryClient}>
+     <BrowserRouter>
         <AppRoutes />
       </BrowserRouter>
+     </QueryClientProvider>
+ 
     </>
   )
 }

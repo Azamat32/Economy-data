@@ -1,46 +1,34 @@
-import { useEffect, useState } from "react";
+import {
+  Key,
+  
+  useEffect,
+  useState,
+} from "react";
 import axios from "axios";
 import "./MainPage.scss";
-import close from "../../assets/Gallery/close.svg"
+import close from "../../assets/Gallery/close.svg";
+
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import Loader from "../../widgets/Loader/Loader";
+import { NavLink } from "react-router-dom";
+
 type Props = {};
 type TableTitles = {
   id: number;
   name: string;
 };
 
-const api = "economic_indices"
+const api = "economic_indices";
 const MainPage = (_props: Props) => {
-  const [isOpened , setIsOpened] = useState(false)
   const [tablesTitle, setTablesTitle] = useState<TableTitles[]>([]);
-  const [dropdownContent, setDropdownContent] = useState<{
-    id: number;
-    name: string;
-    path: string | null;
-    macro_topic: number;
-  }[]>([]);
+  const [selectedId, setSelectedId] = useState<number>(17);
+
+ 
+
   useEffect(() => {
     fetchData();
   }, []);
-  const handleModal = (isOpened:boolean) => {
-    console.log(isOpened);
 
-      setIsOpened(!isOpened) 
-  }
-  const handleClick = async (id: number) => {
-    console.log(id)
-    try {
-      const response = await axios.post(
-        `http://127.0.0.1:8000/api/${api}`,
-        
-        
-        { id } // Sending the id in the request payload
-      );
-      setDropdownContent(response.data); // Assuming the response data should be saved
-      
-    } catch (error) {
-      console.log("Error:", error);
-    }
-  };
 
   const fetchData = async () => {
     try {
@@ -50,49 +38,75 @@ const MainPage = (_props: Props) => {
       }
       const data = await response.json();
       setTablesTitle(data);
-      
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  useEffect(() => {
-    console.log(dropdownContent); // Log dropdownContent whenever it changes
-  }, [dropdownContent]);
+
+  const queryClient = useQueryClient();
+
+  const fetchTables = async (id: number) => {
+
+    const response = await axios.post(`http://127.0.0.1:8000/api/economic_indices`, {
+      id,
+    });
+    return response.data;
+  };
+
+  const {isLoading, error, data: fetchedTables } = useQuery(
+    ["fetchTables", selectedId],
+    
+    () => fetchTables(selectedId),
+    {
+      
+      enabled: true, // Initially, query is disabled
+     
+      onError: (error) => {
+        console.error("Error:", error);
+      },
+    }
+  );
+    
+  const handleClick = async (id: number) => {
+    setSelectedId(id);
+    
+    await queryClient.invalidateQueries(["fetchTables", id]);
+  };
+
+
+
   let tables = tablesTitle.map((item) => {
     return (
       <div className="title-wrapper" key={item.id}>
-      <div
-        onClick={() => handleClick(item.id)}
-        className="title"
-      >
-        {item.name}
-        <div
-        onClick={() => handleModal(isOpened)}
-        className="open-modal-button"
-      >
+        <div onClick={() => handleClick(item.id)} className="title">
+          {item.name}
+        </div>
       </div>
-      </div>
-    
-    </div>
     );
   });
   return (
     <div className="main">
       <div className="container">
-      <div className={`Modal ${isOpened ? 'active' : ''}`}>     
-          <div className="modal_inner">
-              <img className="close" src={close} onClick={() => handleModal(isOpened)} />
-              <div className="modal_list">
-              {dropdownContent.map((item) => (
-          <a key={item.id} href={item.id.toString()} className="list-item">
-        {item.name}
-          </a>
-        ))}
-              </div>
+  
+        <div className="main_inner">
+          <div className="table_titles">
+          {tables}
+          </div>
+          <div className="table_links">
+          {isLoading ? ( // Use isLoading to conditionally render the loader
+              <Loader />
+            ) : (
+              fetchedTables &&
+              fetchedTables.map((item: { id: Key; name: string }) => (
+                <NavLink key={item.id} to={`/economic_index/${item.id}`} className="list-item">
+                   
+                  {item.name}
+                </NavLink>
+               
+              ))
+            )}
+          </div>
         </div>
-    </div>
-        <div className="main_inner">{tables}</div>
-
       </div>
     </div>
   );

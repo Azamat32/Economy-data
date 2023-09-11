@@ -11,6 +11,7 @@ import RegistersPage from "../pages/RegistersPage/RegistersPage";
 import ReportPage from "../pages/ReportPage/ReportPage";
 import Loader from "../widgets/Loader/Loader";
 import Navbar from "../widgets/Navbar/Navbar";
+import ElementIndexTable from "../pages/ElementIndexTable/ElementIndexTable";
 type Props = {}
 
 const AppRoutes = (props: Props) => {
@@ -27,6 +28,8 @@ const AppRoutes = (props: Props) => {
     <Routes>
       <Route path="/autorize" element={<AutorizationPage/> } />
       <Route path="/" element={<MainPage />} />
+      <Route path="/economic_index/:id" element={<ElementIndexTable/>  } />
+
       <Route path="/notification" element={<NotificationPage />} />
       <Route path="/reports" element={<ReportPage />} />
       <Route path="/registers" element={<RegistersPage />} />

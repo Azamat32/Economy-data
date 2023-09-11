@@ -1,10 +1,8 @@
+import "./Loader.scss"
 
-type Props = {}
-
-const Loader = (props: Props) => {
+const Loader = () => {
   return (
-    <div>Loader</div>
-  )
+    <div className="loader"></div>
+  );
 }
-
 export default Loader
