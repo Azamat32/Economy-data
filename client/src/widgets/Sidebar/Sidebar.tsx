@@ -11,13 +11,13 @@ const Sidebar = (props: SideBarProps) => {
       <div className="sidebar_inner">
         <ul>
           <li>
-            <NavLink to="/">MainPage </NavLink>
+            <NavLink to="/">Главная</NavLink>
           </li>
           <li>
-            <NavLink to="/notification">Notifications </NavLink>
+            <NavLink to="/notification">Уведомления </NavLink>
           </li>
           <li>
-            <NavLink to="/reports">Reports </NavLink>
+            <NavLink to="/reports">Доклады </NavLink>
           </li>
 
           <li><NavLink to="/registers">Реестры </NavLink></li>

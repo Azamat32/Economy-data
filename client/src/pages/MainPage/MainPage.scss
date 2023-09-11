@@ -11,10 +11,59 @@
             text-align: center;
             cursor: pointer;
             transition: 0.3s;
+            position: relative;
             &:hover{
                 background: #343434;
                 color: #fff;
             }
         }
+        .open-modal-button{
+            text-align: center;
+            cursor: pointer;
+    width: 100%;
+    top: 0;
+    height: 40px;
+    position: absolute;
+        }
+    }
+}
+
+
+.close{
+    width: 20px;
+    cursor: pointer;
+    position: absolute;
+ right: 10px;
+ top: 10px;
+}
+
+.Modal{
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    z-index: 1;
+    display: none;
+    .modal_inner{
+        position: relative;
+        max-width: 600px;
+        margin:  155px auto;
+        background: #fff;
+        height: 400px;
+        overflow: scroll;
+        border-radius: 10px;
+        box-shadow: 10px 10px 10px (#595959);
+        padding-top: 40px;
+        .modal_list{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+    }
+    &.active{
+        display: block;
     }
 }
