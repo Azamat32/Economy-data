@@ -1,14 +1,8 @@
-import {
-  Key,
-  
-  useEffect,
-  useState,
-} from "react";
+import { Key, useEffect, useState } from "react";
 import axios from "axios";
 import "./MainPage.scss";
-import close from "../../assets/Gallery/close.svg";
 
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import Loader from "../../widgets/Loader/Loader";
 import { NavLink } from "react-router-dom";
 
@@ -18,17 +12,16 @@ type TableTitles = {
   name: string;
 };
 
-const api = "economic_indices";
 const MainPage = (_props: Props) => {
   const [tablesTitle, setTablesTitle] = useState<TableTitles[]>([]);
-  const [selectedId, setSelectedId] = useState<number>(17);
-
- 
-
+  const [selectedId, setSelectedId] = useState<number>(
+    1
+  );
+    
   useEffect(() => {
+    
     fetchData();
   }, []);
-
 
   const fetchData = async () => {
     try {
@@ -47,33 +40,36 @@ const MainPage = (_props: Props) => {
 
   const fetchTables = async (id: number) => {
 
-    const response = await axios.post(`http://127.0.0.1:8000/api/economic_indices`, {
-      id,
-    });
+    const response = await axios.post(
+      `http://127.0.0.1:8000/api/economic_indices`,
+      {
+        id,
+      }
+    );
     return response.data;
   };
 
-  const {isLoading, error, data: fetchedTables } = useQuery(
+  const {
+    isLoading,
+    data: fetchedTables,
+  } = useQuery(
     ["fetchTables", selectedId],
-    
+
     () => fetchTables(selectedId),
     {
-      
       enabled: true, // Initially, query is disabled
-     
+
       onError: (error) => {
         console.error("Error:", error);
       },
     }
   );
-    
+
   const handleClick = async (id: number) => {
     setSelectedId(id);
-    
+
     await queryClient.invalidateQueries(["fetchTables", id]);
   };
-
-
 
   let tables = tablesTitle.map((item) => {
     return (
@@ -87,22 +83,21 @@ const MainPage = (_props: Props) => {
   return (
     <div className="main">
       <div className="container">
-  
         <div className="main_inner">
-          <div className="table_titles">
-          {tables}
-          </div>
+          <div className="table_titles">{tables}</div>
           <div className="table_links">
-          {isLoading ? ( // Use isLoading to conditionally render the loader
+            {isLoading ? ( // Use isLoading to conditionally render the loader
               <Loader />
             ) : (
               fetchedTables &&
               fetchedTables.map((item: { id: Key; name: string }) => (
-                <NavLink key={item.id} to={`/economic_index/${item.id}`} className="list-item">
-                   
+                <NavLink
+                  key={item.id}
+                  to={`/economic_index/${item.id}`}
+                  className="list-item"
+                >
                   {item.name}
                 </NavLink>
-               
               ))
             )}
           </div>
