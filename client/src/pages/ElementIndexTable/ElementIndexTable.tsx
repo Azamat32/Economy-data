@@ -9,10 +9,8 @@ type RouteParams = {
   id: string; // Define the route parameter as a string
 };
 const fetchElementById = async (id: any) => {
-  console.log(id);
   
   const response = await axios.post(apiEndpoint, { id });
-  console.log(response);
 
   return response.data;
 };
