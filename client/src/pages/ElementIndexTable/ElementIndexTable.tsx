@@ -2,7 +2,21 @@ import  { useEffect, useState } from "react";
 import axios from "axios";
 import * as XLSX from "xlsx";
 import "./ElementIndexTable.scss"
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
 const apiEndpoint = "http://127.0.0.1:8000/api/economic_index";
+type RouteParams = {
+  id: string; // Define the route parameter as a string
+};
+const fetchElementById = async (id: any) => {
+  console.log(id);
+  
+  const response = await axios.post(apiEndpoint, { id });
+  console.log(response);
+
+  return response.data;
+};
+
 
 const fetchExcelFile = async () => {
   const response = await axios.get(`${apiEndpoint}/excel`, {
@@ -12,12 +26,20 @@ const fetchExcelFile = async () => {
 };
 
 const ElementIndexTable = () => {
+  const { id } = useParams<RouteParams>();
+
   const [excelData, setExcelData] = useState<Blob | null>(null);
   const [sheetData, setSheetData] = useState<any[][] | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingTable, setIsLoadingTable] = useState(false);
+
+  
+  const { data, isLoading } = useQuery(["getElementById", id], () =>
+    fetchElementById(id)
+  );
+
 
   useEffect(() => {
-    setIsLoading(true);
+    setIsLoadingTable(true);
     fetchExcelFile()
       .then((excelFile) => {
         const blob = new Blob([excelFile], {
@@ -30,7 +52,7 @@ const ElementIndexTable = () => {
         console.error("Error fetching Excel file:", error);
       })
       .finally(() => {
-        setIsLoading(false);
+        setIsLoadingTable(false);
       });
   }, []);
 
@@ -66,16 +88,21 @@ const ElementIndexTable = () => {
         }
       }
     }
-    console.log(sheetData);
   }
 
   function isEmpty(value: string | null | undefined) {
     return value === undefined || value === null;
   }
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="container">
       <div className="table-title">
         <h2>Excel Data</h2>
+        <h2> {data.name}</h2>
+
       </div>
       {isLoading && <div>Loading...</div>}
       {sheetData && (
