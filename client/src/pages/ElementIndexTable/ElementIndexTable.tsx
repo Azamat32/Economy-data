@@ -1,115 +1,89 @@
-import { useParams } from "react-router-dom";
-import {useEffect , useState} from "react"
+import  { useEffect, useState } from "react";
 import axios from "axios";
-import { useQuery } from "react-query";
-import "./ElementIndexTable.scss";
-import * as  XLSX from "xlsx"; // Import the xlsx library
-
-type RouteParams = {
-  id: string; // Define the route parameter as a string
-};
-type Props = {};
-
-const apiEndpoint = "http://127.0.0.1:8000/api/economic_index"; // Replace with your API endpoint
-const fetchElementById = async (id: any) => {
-  console.log(id);
-  
-  const response = await axios.post(apiEndpoint, { id });
-  return response.data;
-};
-
+import * as XLSX from "xlsx";
+import "./ElementIndexTable.scss"
+const apiEndpoint = "http://127.0.0.1:8000/api/economic_index";
 
 const fetchExcelFile = async () => {
   const response = await axios.get(`${apiEndpoint}/excel`, {
-    responseType: "blob", // Set the response type to blob
+    responseType: "blob",
   });
   return response.data;
 };
 
-
-
-const ElementIndexTable = (_props: Props) => {
-  const { id } = useParams<RouteParams>();
-
-  const { data, isLoading } = useQuery(["getElementById", id], () =>
-    fetchElementById(id)
-  );
-
-  const [excelData, setExcelData] = useState<Blob | null>(null); // Provide null as the initial state
-  const [sheetData, setSheetData] = useState<any[][] | null>(null); // State to store the Excel sheet data
+const ElementIndexTable = () => {
+  const [excelData, setExcelData] = useState<Blob | null>(null);
+  const [sheetData, setSheetData] = useState<any[][] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     fetchExcelFile()
       .then((excelFile) => {
-        // Create a blob URL for the Excel file
         const blob = new Blob([excelFile], {
           type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         });
-  
         setExcelData(blob);
-  
-        // Parse the Excel file
         parseExcelFile(blob);
       })
       .catch((error) => {
         console.error("Error fetching Excel file:", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-  }, [id]);
-  
+  }, []);
 
   const parseExcelFile = (file: Blob) => {
     const reader = new FileReader();
-  
-    reader.onload = (e) => {
-      const data = (e.target as FileReader).result;
 
+    reader.onload = (e) => {
+      const data = (e.target as FileReader).result as string;
       const workbook = XLSX.read(data, { type: "binary" });
 
-      
       // Assuming you want the data from the first sheet
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
-  
+
       // Parse the sheet data into an array of objects
-      const excelData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-  
+      const excelData = XLSX.utils.sheet_to_json(sheet, {
+        header: 1,
+        blankrows:false,
+      });
+
       // Set the parsed data in state
       setSheetData(excelData as any[][]);
-
+        
     };
-  
+
     reader.readAsBinaryString(file);
   };
-  
-
-
-
-
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (sheetData) {
+    for (let i = 0; i < sheetData.length; i++) {
+      for (let j = 0; j < sheetData[i].length; j++) {
+        if (isEmpty(sheetData[i][j])) {
+          sheetData[i][j] = ""; // Change empty element to an empty string
+        }
+      }
+    }
+    console.log(sheetData);
   }
 
-  if (!data) {
-    return <div>No data found.</div>;
+  function isEmpty(value: string | null | undefined) {
+    return value === undefined || value === null;
   }
   return (
-    <div>
-      <div className="table_title">
-        <h2> {data.name}</h2>
-        {/* {excelData && (
-          <a href={excelData} download="test.xlsx">
-            Download Excel File
-          </a>
-        )} */}
-
-{sheetData && (
-      <div>
-        <h3>Excel Data</h3>
-        <table>
+    <div className="container">
+      <div className="table-title">
+        <h2>Excel Data</h2>
+      </div>
+      {isLoading && <div>Loading...</div>}
+      {sheetData && (
+        <table className="table">
           <thead>
             <tr>
               {sheetData[0].map((header: string, index: number) => (
-                <th key={index}>{header}</th>
+                <th  key={index}>{header}</th>
               ))}
             </tr>
           </thead>
@@ -123,9 +97,15 @@ const ElementIndexTable = (_props: Props) => {
             ))}
           </tbody>
         </table>
-      </div>
-    )}
-      </div>
+      )}
+      {excelData && (
+        <div className="download-link">
+          <a href={window.URL.createObjectURL(excelData)} download="test.xlsx">
+            Download Excel File
+          </a>
+        </div>
+      )}
+    
     </div>
   );
 };

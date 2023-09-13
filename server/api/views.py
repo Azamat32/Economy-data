@@ -106,7 +106,7 @@ def get_economic_index(request):
 @api_view(['GET'])
 def get_excel(request):
     # Construct the path to the Excel file
-    excel_file_path = os.path.join('static', 'Excel', 'test1.xlsx')
+    excel_file_path = os.path.join('static', 'Excel', 'acc_health_system.xlsx')
 
     # Check if the file exists
     if os.path.isfile(excel_file_path):

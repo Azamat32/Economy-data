@@ -1,4 +1,44 @@
-.table_title{
+.table_title {
+  text-align: center;
+  font-size: 25px;
+}
+.download-link{
     text-align: center;
-    font-size: 25px;
+    margin-top: 50px;
+    a{  
+        color: #fff;
+        text-decoration: none;
+        text-align: center;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #000;
+        transition: 0.4s;
+        background: #343a40;
+        &:hover{
+            background: #fff;
+            color: #343a40;
+        }
+    }
+ 
+}
+.table {
+  border: 1px solid #000;
+  border-collapse: collapse;
+  text-align: left;
+  width: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+  tr,   
+  td {
+    padding: 10px 10px;
+    border: 1px solid #000;
+  }
+  tr{
+    th{
+    border: 1px solid #000;
+
+        padding: 0px 10px;
+    }
+  }
+ 
 }
