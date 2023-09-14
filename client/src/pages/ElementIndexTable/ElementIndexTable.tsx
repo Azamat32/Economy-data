@@ -16,10 +16,12 @@ const fetchElementById = async (id: any) => {
 };
 
 
-const fetchExcelFile = async () => {
-  const response = await axios.get(`${apiEndpoint}/excel`, {
+const fetchExcelFile = async (id: any) => {
+  const response = await axios.post(apiEndpoint,{ id } , {
     responseType: "blob",
   });
+  console.log(response.data);
+  
   return response.data;
 };
 
@@ -38,7 +40,7 @@ const ElementIndexTable = () => {
 
   useEffect(() => {
     setIsLoadingTable(true);
-    fetchExcelFile()
+    fetchExcelFile(id)
       .then((excelFile) => {
         const blob = new Blob([excelFile], {
           type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

@@ -18,6 +18,7 @@ def main():
         ) from exc
     execute_from_command_line(sys.argv)
 
+
 if __name__ == '__main__':
-    update_topics()
+    # update_topics()
     main()
