@@ -4,20 +4,20 @@ import * as XLSX from "xlsx";
 import "./ElementIndexTable.scss"
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-const apiEndpoint = "http://127.0.0.1:8000/api/economic_index";
+const apiEndpoint = "http://127.0.0.1:8000/api";
 type RouteParams = {
   id: string; // Define the route parameter as a string
 };
 const fetchElementById = async (id: any) => {
   
-  const response = await axios.post(apiEndpoint, { id });
+  const response = await axios.post(`${apiEndpoint}/economic_index`, { id });
 
   return response.data;
 };
 
 
 const fetchExcelFile = async (id: any) => {
-  const response = await axios.post(apiEndpoint,{ id } , {
+  const response = await axios.post(`${apiEndpoint}/economic_index_excel`,{ id } , {
     responseType: "blob",
   });
   console.log(response.data);
