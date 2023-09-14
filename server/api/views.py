@@ -44,27 +44,14 @@ def get_economic_index(request):
             if macro_id is not None:
                 try:
                     related_indices = Economic_index.objects.get(id=macro_id)
-                    print(related_indices)
-                    serializer = EconomicIndexSerializer(related_indices, many=False)
+                    name_excel = related_indices.path
                     
-                    excel_file_path = os.path.join('static', 'Excel', 'test1.xlsx')
-                    # return Response(serializer.data)
+                    excel_file_path = os.path.join('static', 'Excel', name_excel)
                     # Check if the file exists
                     if os.path.isfile(excel_file_path):
                         # Create a FileResponse for the existing file
-                        excel_response = FileResponse(open(excel_file_path, 'rb'), as_attachment=True, filename='test.xlsx')
-                        
-                        # Create a JSON response with the serialized data
-                        data_response = JsonResponse(serializer.data)
-                        
-                        # Create a StreamingHttpResponse to return both responses
-                        response = StreamingHttpResponse(
-                        streaming_content=(excel_response.streaming_content, data_response.content),
-                        content_type='multipart/mixed',
-                        )
-
-                        
-                        return response
+                        excel_response = FileResponse(open(excel_file_path, 'rb'), as_attachment=True, filename=name_excel)                        
+                        return excel_response
                     else:
                         return JsonResponse({"error": "Excel file not found."}, status=404)
                 except Economic_index.DoesNotExist:
@@ -77,30 +64,30 @@ def get_economic_index(request):
     return JsonResponse({"error": "Invalid request method."}, status=405)
    
 
-@api_view(['POST'])
-def get_economic_index(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            macro_id = data.get('id')
-            if macro_id is not None:
-                try:
-                    related_indices = Economic_index.objects.get(id=macro_id)
-                    print(related_indices)
-                    serializer = EconomicIndexSerializer(related_indices, many=False)
+# @api_view(['POST'])
+# def get_economic_index(request):
+#     if request.method == 'POST':
+#         try:
+#             data = json.loads(request.body)
+#             macro_id = data.get('id')
+#             if macro_id is not None:
+#                 try:
+#                     related_indices = Economic_index.objects.get(id=macro_id)
+#                     print(related_indices)
+#                     serializer = EconomicIndexSerializer(related_indices, many=False)
                     
-                    excel_file_path = os.path.join('static', 'Excel', 'test1.xlsx')
-                    return Response(serializer.data)
-                    # Check if the file exists
+#                     excel_file_path = os.path.join('static', 'Excel', 'test1.xlsx')
+#                     return Response(serializer.data)
+#                     # Check if the file exists
                   
-                except Economic_index.DoesNotExist:
-                    return JsonResponse({"error": "Economic index with the specified ID does not exist."}, status=404)
-            else:
-                return JsonResponse({"error": "Macro ID parameter is missing."}, status=400)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON data in the request body."}, status=400)
+#                 except Economic_index.DoesNotExist:
+#                     return JsonResponse({"error": "Economic index with the specified ID does not exist."}, status=404)
+#             else:
+#                 return JsonResponse({"error": "Macro ID parameter is missing."}, status=400)
+#         except json.JSONDecodeError:
+#             return JsonResponse({"error": "Invalid JSON data in the request body."}, status=400)
     
-    return JsonResponse({"error": "Invalid request method."}, status=405)
+#     return JsonResponse({"error": "Invalid request method."}, status=405)
    
 
 @api_view(['GET'])
