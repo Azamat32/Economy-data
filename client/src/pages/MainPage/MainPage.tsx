@@ -15,7 +15,7 @@ type TableTitles = {
 const MainPage = (_props: Props) => {
   const [tablesTitle, setTablesTitle] = useState<TableTitles[]>([]);
   const [selectedId, setSelectedId] = useState<number>(
-    25
+    9
   );
     
   useEffect(() => {
