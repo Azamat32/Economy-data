@@ -30,7 +30,7 @@ If you are developing a production application, we recommend updating the config
 Инструкция как запустить
 если у вас не установлен  nodejs зайдити  на официальный сайт и установите: https://nodejs.org/ru
 после зайдите в дирокторию  client и напишите команды:
-``sh
+``
 npm install
 npm run dev
 
