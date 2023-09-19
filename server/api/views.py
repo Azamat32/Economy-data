@@ -1,44 +1,30 @@
-import os
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework import generics
 from .models import Economic_index, Topic
 from .serializer import EconomicIndexSerializer, TopicSerializer
 from django.http import FileResponse, JsonResponse
+from django.http import Http404
+import os
 import json
 
 
-@api_view(['GET'])
-def get_topics(request):
-    if request.method == 'GET':
-        topics = Topic.objects.all()
-        serializer = TopicSerializer(topics, many=True)
+class GetTopics(generics.ListAPIView):
+    queryset = Topic.objects.all()  
+    serializer_class = TopicSerializer  
 
-    return Response(serializer.data)
+class GetEconomicIndices(generics.ListAPIView):
+    serializer_class = EconomicIndexSerializer
 
-
-@api_view(['POST'])
-def get_economic_indices(request):
-    if request.method == 'POST':
+    def get_queryset(self):
+        macro_id = self.kwargs['pk'] 
         try:
-            data = json.loads(request.body)
-            macro_id = data.get('id')
-            if macro_id is not None:
-                try:
-                    macro = Topic.objects.get(id=macro_id)
-                    related_indices = Economic_index.objects.filter(
-                        macro_topic=macro)
-                    serializer = EconomicIndexSerializer(
-                        related_indices, many=True)
-                    return Response(serializer.data)
-                except Topic.DoesNotExist:
-                    return JsonResponse({"error": "Topic with the specified ID does not exist."}, status=404)
-            else:
-                return JsonResponse({"error": "Macro ID parameter is missing."}, status=400)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON data in the request body."}, status=400)
+            macro = Topic.objects.get(id=macro_id)
+        except Topic.DoesNotExist:
+            raise Http404("Topic with the specified ID does not exist.")
 
-    return JsonResponse({"error": "Invalid request method."}, status=405)
-
+        related_indices = Economic_index.objects.filter(macro_topic=macro)
+        return related_indices
 
 @api_view(['POST'])
 def get_economic_index_excel(request):
@@ -50,17 +36,11 @@ def get_economic_index_excel(request):
                 try:
                     related_indices = Economic_index.objects.get(id=macro_id)
                     name_excel = related_indices.path
-                    excel_file_path = os.path.join(
-                        'static', 'Excel', name_excel)
-                    print(excel_file_path)
-
+                    excel_file_path = os.path.join('static', 'Excel', name_excel)
                     if os.path.isfile(excel_file_path):
-                        print("hello")
                         excel_response = FileResponse(open(excel_file_path, 'rb'), as_attachment=True, filename=name_excel)
                         return excel_response
                     else:
-                        print("hello1312")
-
                         return JsonResponse({"error": "Excel file not found."}, status=404)
                 except Economic_index.DoesNotExist:
                     return JsonResponse({"error": "Economic index with the specified ID does not exist."}, status=404)
@@ -72,27 +52,6 @@ def get_economic_index_excel(request):
     return JsonResponse({"error": "Invalid request method."}, status=405)
 
 
-@api_view(['POST'])
-def get_economic_index(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            macro_id = data.get('id')
-            if macro_id is not None:
-                try:
-                    related_indices = Economic_index.objects.get(id=macro_id)
-                    serializer = EconomicIndexSerializer(
-                        related_indices, many=False)
-
-                    excel_file_path = os.path.join(
-                        'static', 'Excel', 'test1.xlsx')
-                    return Response(serializer.data)
-
-                except Economic_index.DoesNotExist:
-                    return JsonResponse({"error": "Economic index with the specified ID does not exist."}, status=404)
-            else:
-                return JsonResponse({"error": "Macro ID parameter is missing."}, status=400)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON data in the request body."}, status=400)
-
-    return JsonResponse({"error": "Invalid request method."}, status=405)
+class GetEconomicIndex(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Economic_index.objects.all()
+    serializer_class = EconomicIndexSerializer
