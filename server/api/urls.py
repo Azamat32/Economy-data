@@ -1,10 +1,12 @@
-from django.urls import path
-from . import views
+from django.urls import path, re_path, include
+from .views import *
 
 urlpatterns = [
-    path('topics', views.get_topics, name = "topics"), 
-    path('economic_indices', views.get_economic_indices, name = "economic_indices"),
-    path('economic_index', views.get_economic_index, name = "economic_index"),    
-    path('economic_index_excel', views.get_economic_index_excel, name = "economic_index"),    
-
+    path('topics/', GetTopics.as_view()),
+    path('economic_indices/<int:pk>/', GetEconomicIndices.as_view()), 
+    path('economic_index/<int:pk>/', GetEconomicIndex.as_view()),    
+    path('economic_index_excel/<int:pk>/', GetEconomicIndexExcel.as_view()),
+    #path('save_excel/<int:pk>/',),
+    path('auth/', include('djoser.urls')),
+    re_path(r'^auth/', include('djoser.urls.authtoken')),    
 ]
