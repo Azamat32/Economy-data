@@ -10,14 +10,14 @@ type RouteParams = {
 };
 const fetchElementById = async (id: any) => {
   
-  const response = await axios.post(`${apiEndpoint}/economic_index`, { id });
+  const response = await axios.get(`${apiEndpoint}/economic_index/${id}`, );
 
   return response.data;
 };
 
 
 const fetchExcelFile = async (id: any) => {
-  const response = await axios.post(`${apiEndpoint}/economic_index_excel`,{ id } , {
+  const response = await axios.get(`${apiEndpoint}/economic_index_excel/${id}`,{
     responseType: "blob",
   });
   console.log(response.data);
@@ -70,8 +70,9 @@ const ElementIndexTable = () => {
 
       // Parse the sheet data into an array of objects
       const excelData = XLSX.utils.sheet_to_json(sheet, {
-        header: 1,
         blankrows:false,
+        defval: '' ,
+        header: 1,
       });
 
       // Set the parsed data in state
@@ -85,12 +86,10 @@ const ElementIndexTable = () => {
   if (isLoading) {
     return <div>Loading...</div>;
   }// ...
+  if (sheetData){
+    console.log(sheetData);
+  }
 
-const filteredData = sheetData?.map((row) => row.filter((cell) => cell !== ""));
-if (filteredData){
-  console.log(filteredData);
-  
-}
 return (
   <div className="container">
     <div className="table-title">
@@ -98,18 +97,18 @@ return (
       <h2> {data.name}</h2>
     </div>
     {isLoading && <div>Loading...</div>}
-    {filteredData && filteredData[0] ? (
+    {sheetData && sheetData[0] ? (
       <div className="table">
         <div className="table_head">
           <div>
-            {filteredData[0].map((header: string, index: number) => (
+            {sheetData[0].map((header: string, index: number) => (
               
               <p key={index}>{header}</p>
             ))}
           </div>
         </div>
         <div className="table_body">
-          {filteredData.slice(1).map((row: any[], rowIndex: number) => (
+          {sheetData.slice(1).map((row: any[], rowIndex: number) => (
             <div key={rowIndex}>
               {row.map((cell: any, cellIndex: number) => (
                  

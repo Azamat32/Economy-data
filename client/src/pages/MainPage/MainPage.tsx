@@ -40,11 +40,8 @@ const MainPage = (_props: Props) => {
 
   const fetchTables = async (id: number) => {
 
-    const response = await axios.post(
-      `http://127.0.0.1:8000/api/economic_indices`,
-      {
-        id,
-      }
+    const response = await axios.get(
+      `http://127.0.0.1:8000/api/economic_indices/${id}`,
     );
     return response.data;
   };
