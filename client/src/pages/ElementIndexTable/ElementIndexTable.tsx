@@ -30,6 +30,7 @@ const ElementIndexTable = () => {
 
   const [excelData, setExcelData] = useState<Blob | null>(null);
   const [sheetData, setSheetData] = useState<any[][] | null>(null);
+
   const [isLoadingTable, setIsLoadingTable] = useState(false);
 
   
@@ -75,66 +76,63 @@ const ElementIndexTable = () => {
 
       // Set the parsed data in state
       setSheetData(excelData as any[][]);
-        
+      
     };
 
     reader.readAsBinaryString(file);
   };
-  if (sheetData) {
-    for (let i = 0; i < sheetData.length; i++) {
-      for (let j = 0; j < sheetData[i].length; j++) {
-        if (isEmpty(sheetData[i][j])) {
-          sheetData[i][j] = ""; // Change empty element to an empty string
-        }
-      }
-    }
-  }
 
-  function isEmpty(value: string | null | undefined) {
-    return value === undefined || value === null;
-  }
   if (isLoading) {
     return <div>Loading...</div>;
-  }
+  }// ...
 
-  return (
-    <div className="container">
-      <div className="table-title">
-        <h2>Excel Data</h2>
-        <h2> {data.name}</h2>
-
-      </div>
-      {isLoading && <div>Loading...</div>}
-      {sheetData && (
-        <table className="table">
-          <thead>
-            <tr>
-              {sheetData[0].map((header: string, index: number) => (
-                <th  key={index}>{header}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {sheetData.slice(1).map((row: any[], rowIndex: number) => (
-              <tr key={rowIndex}>
-                {row.map((cell: any, cellIndex: number) => (
-                  <td key={cellIndex}>{cell}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-      {excelData && (
-        <div className="download-link">
-          <a href={window.URL.createObjectURL(excelData)} download="test.xlsx">
-            Download Excel File
-          </a>
-        </div>
-      )}
-    
+const filteredData = sheetData?.map((row) => row.filter((cell) => cell !== ""));
+if (filteredData){
+  console.log(filteredData);
+  
+}
+return (
+  <div className="container">
+    <div className="table-title">
+      <h2>Excel Data</h2>
+      <h2> {data.name}</h2>
     </div>
-  );
-};
+    {isLoading && <div>Loading...</div>}
+    {filteredData && filteredData[0] ? (
+      <div className="table">
+        <div className="table_head">
+          <div>
+            {filteredData[0].map((header: string, index: number) => (
+              
+              <p key={index}>{header}</p>
+            ))}
+          </div>
+        </div>
+        <div className="table_body">
+          {filteredData.slice(1).map((row: any[], rowIndex: number) => (
+            <div key={rowIndex}>
+              {row.map((cell: any, cellIndex: number) => (
+                 
+                <p key={cellIndex}>{cell} <span className="border_elemnt"></span></p>    
+           
+               
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    ) : (
+      <div>No data found.</div>
+    )}
+    {excelData && (
+      <div className="download-link">
+        <a href={window.URL.createObjectURL(excelData)} download="test.xlsx">
+          Download Excel File
+        </a>
+      </div>
+    )}
+  </div>
+);}
+
 
 export default ElementIndexTable;
