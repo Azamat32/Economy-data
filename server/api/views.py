@@ -1,12 +1,12 @@
-from rest_framework.views import APIView
+#from rest_framework.views import APIView
 from rest_framework import generics
 from .models import Economic_index, Topic
 from .serializer import EconomicIndexSerializer, TopicSerializer
-from django.http import FileResponse, JsonResponse
+#from django.http import FileResponse, JsonResponse
 from django.http import Http404
-from rest_framework.response import Response
-from rest_framework import status
-import os
+#from rest_framework.response import Response
+#from rest_framework import status
+#import os
 
 class GetTopics(generics.ListAPIView):
     queryset = Topic.objects.all()  
@@ -29,43 +29,44 @@ class GetEconomicIndex(generics.RetrieveUpdateDestroyAPIView):
     queryset = Economic_index.objects.all()
     serializer_class = EconomicIndexSerializer
 
-class GetEconomicIndexExcel(APIView):
-    def get(self, request, pk):
-        try:
-            related_indices = Economic_index.objects.get(id=pk)
-            excel_file_path = os.path.join('static', 'Excel', related_indices.path)
-            if os.path.isfile(excel_file_path):
-                excel_response = FileResponse(open(excel_file_path, 'rb'), as_attachment=True, filename=related_indices.path)
-                return excel_response
-            else:
-                return JsonResponse({"error": "Excel file not found."}, status=404)
-        except Economic_index.DoesNotExist:
-            return JsonResponse({"error": "Economic index with the specified ID does not exist."}, status=404) 
 
-class SaveExcel(APIView):
-    def post(self, request, pk):
-        if request.FILES.get('excel_file'):
-            excel_file = request.FILES['excel_file']
+# class GetEconomicIndexExcel(APIView):
+#     def get(self, request, pk):
+#         try:
+#             tables = Table.objects.filter(macro_economic_index__id=pk)
+#             excel_file_path = os.path.join('static', 'Excel', tables.path)  
+#             if os.path.isfile(excel_file_path):
+#                 excel_response = FileResponse(open(excel_file_path, 'rb'), as_attachment=True, filename=related_indices.path)
+#                 return excel_response
+#             else:
+#                 return JsonResponse({"error": "Excel file not found."}, status=404)
+#         except Economic_index.DoesNotExist:
+#             return JsonResponse({"error": "Economic index with the specified ID does not exist."}, status=404) 
 
-            # Путь к каталогу static/excel_files
-            excel_files_dir = os.path.join('static', 'Excel')
+# class SaveExcel(APIView):
+#     def post(self, request, pk):
+#         if request.FILES.get('excel_file'):
+#             excel_file = request.FILES['excel_file']
 
-            related_indices = Economic_index.objects.get(id=pk)
-            excel_file_path = os.path.join(excel_files_dir, related_indices.path)
+#             # Путь к каталогу static/excel_files
+#             excel_files_dir = os.path.join('static', 'Excel')
 
-            # Проверить, существует ли каталог static/Excel
-            if not os.path.exists(excel_files_dir):
-                os.makedirs(excel_files_dir)
+#             related_indices = Economic_index.objects.get(id=pk)
+#             excel_file_path = os.path.join(excel_files_dir, related_indices.path)
 
-            # Удаляем старый файл, если он существует
-            if os.path.exists(excel_file_path):
-                os.remove(excel_file_path)
+#             # Проверить, существует ли каталог static/Excel
+#             if not os.path.exists(excel_files_dir):
+#                 os.makedirs(excel_files_dir)
 
-            # Сохранить Excel-файл в каталог static/Excel
-            with open(excel_file_path, 'wb') as destination:
-                for chunk in excel_file.chunks():
-                    destination.write(chunk)
+#             # Удаляем старый файл, если он существует
+#             if os.path.exists(excel_file_path):
+#                 os.remove(excel_file_path)
 
-            return Response({'message': 'Excel-файл успешно сохранен в каталоге static/Excel/'}, status=status.HTTP_201_CREATED)
+#             # Сохранить Excel-файл в каталог static/Excel
+#             with open(excel_file_path, 'wb') as destination:
+#                 for chunk in excel_file.chunks():
+#                     destination.write(chunk)
 
-        return Response({'error': 'No Excel file provided.'}, status=status.HTTP_400_BAD_REQUEST)
+#             return Response({'message': 'Excel-файл успешно сохранен в каталоге static/Excel/'}, status=status.HTTP_201_CREATED)
+
+#         return Response({'error': 'No Excel file provided.'}, status=status.HTTP_400_BAD_REQUEST)
