@@ -19,7 +19,7 @@ h1 {
     justify-content: center;
     margin-left: auto;
     margin-right: auto;
-    width: em
+    
 }
 
 p {
@@ -31,7 +31,7 @@ p {
     
 }
 
-a {
+.notFoundLink {
     text-decoration: none;
     background-color: gray;
     color: #fff;
@@ -41,9 +41,11 @@ a {
     transition: background-color 0.3s;
     margin-left: auto;
     margin-right: auto;
-    width: 6em
+    width: 6em;
+
+    &:hover{
+        background-color: grayscale($color: #000000);
+    }
 }
 
-a:hover {
-    background-color: grayscale($color: #000000);
-}
+

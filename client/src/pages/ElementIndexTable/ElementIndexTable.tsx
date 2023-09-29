@@ -8,22 +8,15 @@ const apiEndpoint = "http://127.0.0.1:8000/api";
 type RouteParams = {
   id: string; // Define the route parameter as a string
 };
-const fetchElementById = async (id: any) => {
-  
-  const response = await axios.get(`${apiEndpoint}/economic_index/${id}`, );
+const fetchElementData = async (id: any) => {
+  const response = await axios.get(`${apiEndpoint}/economic_index/${id}`);
+  const data = response.data;
 
-  return response.data;
+  return data;
 };
 
 
-const fetchExcelFile = async (id: any) => {
-  const response = await axios.get(`${apiEndpoint}/economic_index_excel/${id}`,{
-    responseType: "blob",
-  });
-  console.log(response.data);
-  
-  return response.data;
-};
+
 
 const ElementIndexTable = () => {
   const { id } = useParams<RouteParams>();
@@ -35,27 +28,32 @@ const ElementIndexTable = () => {
 
   
   const { data, isLoading } = useQuery(["getElementById", id], () =>
-    fetchElementById(id)
+  fetchElementData(id)
+
   );
 
-
   useEffect(() => {
-    setIsLoadingTable(true);
-    fetchExcelFile(id)
-      .then((excelFile) => {
-        const blob = new Blob([excelFile], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-        setExcelData(blob);
-        parseExcelFile(blob);
-      })
-      .catch((error) => {
-        console.error("Error fetching Excel file:", error);
-      })
-      .finally(() => {
-        setIsLoadingTable(false);
-      });
-  }, []);
+    console.log(data);
+    
+    if (data && data.tables && data.tables.length > 0) {
+      // Assuming you want the first table path
+      const tablePath = data.tables[0].path;
+      fetchExcelFile(tablePath);
+    }
+  }, [data]);
+
+  const fetchExcelFile = async (tablePath: string) => {
+    const response = await axios.get(`http://127.0.0.1:8000/static/tables/${tablePath}.xlsx`, {
+      responseType: "blob",
+    });
+
+    const blob = new Blob([response.data], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    setExcelData(blob);
+    parseExcelFile(blob);
+  };
+ 
 
   const parseExcelFile = (file: Blob) => {
     const reader = new FileReader();
