@@ -98,18 +98,77 @@ const ElementIndexTable = () => {
   };
 
   if (isLoading) {
-    return <div><Loader /></div>;
-  } 
- 
-  const handleCellEdit = (newValue: string, rowIndex: number, cellIndex: number) => {
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
+  }
+
+  const handleCellEdit = (
+    newValue: string,
+    rowIndex: number,
+    cellIndex: number
+  ) => {
     // Создайте копию текущего состояния editableData
     const updatedData = [...(editableData || [])];
-  
+
     // Обновите значение ячейки в копии данных
-    updatedData[rowIndex][cellIndex] = newValue;
-  
+    updatedData[rowIndex + 1][cellIndex] = newValue;
+
     // Обновите состояние editableData
     setEditableData(updatedData);
+  };
+
+  const saveExcelData = () => {
+    if (!editableData) {
+      return;
+    }
+
+    // Create a new Excel workbook
+    const wb = XLSX.utils.book_new();
+
+    // Create a new worksheet
+    const ws = XLSX.utils.aoa_to_sheet(editableData);
+
+    // Add the worksheet to the workbook
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+    // Convert the workbook to an Excel file content as a string
+    const excelFileContent = XLSX.write(wb, {
+      bookType: "xlsx",
+      type: "binary",
+    });
+
+    // Convert the Excel file content to a Blob
+    const blob = new Blob([s2ab(excelFileContent)], {
+      type: "application/octet-stream",
+    });
+
+    // Create a FormData object to send the blob
+    const formData = new FormData();
+    formData.append("excel_file", blob, "test.xlsx");
+
+    // Send a POST request to your Django endpoint
+    axios
+      .post(`http://127.0.0.1:8000/api/save_excel/${id}/`, formData)
+      .then((response) => {
+        console.log("Excel data saved successfully:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error saving Excel data:", error);
+      });
+      setIsEditing(!isEditing)
+  };
+
+  // Utility function to convert a string to an ArrayBuffer
+  const s2ab = (s: string) => {
+    const buf = new ArrayBuffer(s.length);
+    const view = new Uint8Array(buf);
+    for (let i = 0; i < s.length; i++) {
+      view[i] = s.charCodeAt(i) & 0xff;
+    }
+    return buf;
   };
   return (
     <div className="container">
@@ -159,9 +218,14 @@ const ElementIndexTable = () => {
           <a href={window.URL.createObjectURL(excelData)} download="test.xlsx">
             Download Excel File
           </a>
-          <button onClick={() => setIsEditing(!isEditing)}>
-            {isEditing ? "Сохранить изменения" : "Добавить новые данные"}
-          </button>
+
+          {isEditing ? (
+            <button onClick={saveExcelData}>Сохранить изменения</button>
+          ) : (
+            <button onClick={() => setIsEditing(!isEditing)}>
+              Добавить новые данные
+            </button>
+          )}
         </div>
       )}
     </div>
