@@ -34,24 +34,42 @@ const ElementIndexTable = () => {
 
   useEffect(() => {
     console.log(data);
-    
+  
     if (data && data.tables && data.tables.length > 0) {
-      // Assuming you want the first table path
-      const tablePath = data.tables[0].path;
-      fetchExcelFile(tablePath);
+      // Map each table object to a promise that fetches the Excel file
+      const fetchPromises = data.tables.map((table: { id: number; }) => {
+        return fetchExcelFile(table.id);
+      });
+  
+      // Use Promise.all to send multiple requests concurrently
+      Promise.all(fetchPromises)
+        .then((excelBlobs) => {
+          // Combine the fetched Excel blobs into a single blob (if needed)
+          // For example, if you want to merge them into one Excel file
+          const combinedBlob = combineExcelBlobs(excelBlobs);
+          
+          // Set the combined blob and parse it
+          setExcelData(combinedBlob);
+          parseExcelFile(combinedBlob);
+        })
+        .catch((error) => {
+          console.error("Error fetching Excel files:", error);
+        });
     }
   }, [data]);
 
-  const fetchExcelFile = async (tablePath: string) => {
-    const response = await axios.get(`http://127.0.0.1:8000/static/tables/${tablePath}.xlsx`, {
+  const fetchExcelFile = async (tableId: number) => {
+    const response = await axios.get(`http://127.0.0.1:8000/api/economic_index_excel/${tableId}`, {
       responseType: "blob",
     });
-
-    const blob = new Blob([response.data], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    setExcelData(blob);
-    parseExcelFile(blob);
+  
+    return response.data;
+  };
+  
+  // Utility function to combine multiple Excel blobs (if needed)
+  const combineExcelBlobs = (blobs: any[]) => {
+    // Example: Just return the first blob (you can customize this logic)
+    return blobs[0];
   };
  
 
@@ -101,7 +119,7 @@ return (
           <div>
             {sheetData[0].map((header: string, index: number) => (
               
-              <p key={index}>{header}</p>
+              <div className="table_body_element" key={index}>{header}</div>
             ))}
           </div>
         </div>
@@ -110,7 +128,7 @@ return (
             <div key={rowIndex}>
               {row.map((cell: any, cellIndex: number) => (
                  
-                <p key={cellIndex}>{cell} <span className="border_elemnt"></span></p>    
+                <div className="table_body_element" key={cellIndex}>{cell}</div>    
            
                
               ))}

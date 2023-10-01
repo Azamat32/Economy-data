@@ -19,7 +19,7 @@ const MainPage = (_props: Props) => {
   );
     
   useEffect(() => {
-    
+      
     fetchData();
   }, []);
 
