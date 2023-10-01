@@ -116,7 +116,7 @@ return (
     {sheetData && sheetData[0] ? (
       <div className="table">
         <div className="table_head">
-          <div>
+          <div className="table_row">
             {sheetData[0].map((header: string, index: number) => (
               
               <div className="table_body_element" key={index}>{header}</div>
@@ -125,7 +125,7 @@ return (
         </div>
         <div className="table_body">
           {sheetData.slice(1).map((row: any[], rowIndex: number) => (
-            <div key={rowIndex}>
+            <div className="table_row" key={rowIndex}>
               {row.map((cell: any, cellIndex: number) => (
                  
                 <div className="table_body_element" key={cellIndex}>{cell}</div>    
@@ -140,10 +140,11 @@ return (
       <div>No data found.</div>
     )}
     {excelData && (
-      <div className="download-link">
+      <div className="links">
         <a href={window.URL.createObjectURL(excelData)} download="test.xlsx">
           Download Excel File
         </a>
+        <button>Добавить новые данные</button>
       </div>
     )}
   </div>
