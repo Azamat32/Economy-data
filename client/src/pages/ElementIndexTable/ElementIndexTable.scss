@@ -48,10 +48,19 @@
     cursor: pointer;
   }
 }
+.table_container{
+  width: 95%;
+  overflow: scroll;
+  margin: 0 auto;
+  position: relative;
+  height: 50vh;
+
+}
 .table {
   border-collapse: collapse;
   text-align: left;
-  margin: 0 auto;
+  position: absolute;
+  left: 0;
   .table_body_element {
     width: 70px;
     font-size: 10px;

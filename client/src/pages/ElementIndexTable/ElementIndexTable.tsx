@@ -23,7 +23,7 @@ const ElementIndexTable = () => {
   const [sheetData, setSheetData] = useState<any[][] | null>(null);
   const [editableData, setEditableData] = useState<any[][] | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-
+  const [tableId , setTableId] = useState<number>(1)
   const { data, isLoading } = useQuery(["getElementById", id], () =>
     fetchElementData(id)
   );
@@ -33,7 +33,9 @@ const ElementIndexTable = () => {
 
     if (data && data.tables && data.tables.length > 0) {
       // Map each table object to a promise that fetches the Excel file
+      
       const fetchPromises = data.tables.map((table: { id: number }) => {
+        setTableId(table.id)
         return fetchExcelFile(table.id);
       });
 
@@ -121,10 +123,14 @@ const ElementIndexTable = () => {
   };
 
   const saveExcelData = () => {
+   
     if (!editableData) {
+      
+      console.error("Data is missing or incomplete.");
       return;
     }
-
+  
+ 
     // Create a new Excel workbook
     const wb = XLSX.utils.book_new();
 
@@ -151,7 +157,7 @@ const ElementIndexTable = () => {
 
     // Send a POST request to your Django endpoint
     axios
-      .post(`http://127.0.0.1:8000/api/save_excel/${id}/`, formData)
+      .post(`http://127.0.0.1:8000/api/save_excel/${tableId}/`, formData)
       .then((response) => {
         console.log("Excel data saved successfully:", response.data);
       })
@@ -178,7 +184,9 @@ const ElementIndexTable = () => {
       </div>
       {isLoading && <div>Loading...</div>}
       {editableData && editableData[0] ? (
-        <div className="table">
+        <div className="table_container">
+
+<div className="table">
           <div className="table_head">
             <div className="table_row">
               {editableData[0].map((header: string, index: number) => (
@@ -210,6 +218,8 @@ const ElementIndexTable = () => {
             ))}
           </div>
         </div>
+        </div>
+       
       ) : (
         <div>No data found.</div>
       )}

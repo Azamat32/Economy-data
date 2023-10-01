@@ -50,7 +50,7 @@ class SaveExcel(APIView):
 
             # Путь к каталогу static/excel_files
             excel_files_dir = os.path.join('static', 'tables')
-
+    
             related_indices = Table.objects.get(id=pk)
             excel_file_path = os.path.join(excel_files_dir, related_indices.path + ".xlsx")
 
