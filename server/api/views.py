@@ -4,8 +4,8 @@ from .models import Economic_index, Topic, Table
 from .serializer import EconomicIndexSerializer, TopicSerializer
 from django.http import FileResponse, JsonResponse
 from django.http import Http404
-#from rest_framework.response import Response
-#from rest_framework import status
+from rest_framework.response import Response
+from rest_framework import status
 import os
 
 class GetTopics(generics.ListAPIView):
@@ -43,30 +43,30 @@ class GetEconomicIndexExcel(APIView):
          except Economic_index.DoesNotExist:
              return JsonResponse({"error": "Economic index with the specified ID does not exist."}, status=404) 
 
-# class SaveExcel(APIView):
-#     def post(self, request, pk):
-#         if request.FILES.get('excel_file'):
-#             excel_file = request.FILES['excel_file']
+class SaveExcel(APIView):
+    def post(self, request, pk):
+        if request.FILES.get('excel_file'):
+            excel_file = request.FILES['excel_file']
 
-#             # Путь к каталогу static/excel_files
-#             excel_files_dir = os.path.join('static', 'Excel')
+            # Путь к каталогу static/excel_files
+            excel_files_dir = os.path.join('static', 'tables')
 
-#             related_indices = Economic_index.objects.get(id=pk)
-#             excel_file_path = os.path.join(excel_files_dir, related_indices.path)
+            related_indices = Topic.objects.get(id=pk)
+            excel_file_path = os.path.join(excel_files_dir, related_indices.path + ".xlsx")
 
-#             # Проверить, существует ли каталог static/Excel
-#             if not os.path.exists(excel_files_dir):
-#                 os.makedirs(excel_files_dir)
+            # Проверить, существует ли каталог static/Excel
+            if not os.path.exists(excel_files_dir):
+                os.makedirs(excel_files_dir)
 
-#             # Удаляем старый файл, если он существует
-#             if os.path.exists(excel_file_path):
-#                 os.remove(excel_file_path)
+            # Удаляем старый файл, если он существует
+            if os.path.exists(excel_file_path):
+                os.remove(excel_file_path)
 
-#             # Сохранить Excel-файл в каталог static/Excel
-#             with open(excel_file_path, 'wb') as destination:
-#                 for chunk in excel_file.chunks():
-#                     destination.write(chunk)
+            # Сохранить Excel-файл в каталог static/Excel
+            with open(excel_file_path, 'wb') as destination:
+                for chunk in excel_file.chunks():
+                    destination.write(chunk)
 
-#             return Response({'message': 'Excel-файл успешно сохранен в каталоге static/Excel/'}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'Excel-файл успешно сохранен в каталоге static/Excel/'}, status=status.HTTP_201_CREATED)
 
-#         return Response({'error': 'No Excel file provided.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'No Excel file provided.'}, status=status.HTTP_400_BAD_REQUEST)
