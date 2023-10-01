@@ -35,7 +35,6 @@ class GetEconomicIndexExcel(APIView):
          try:
              tables = Table.objects.get(id=pk)
              excel_file_path = os.path.join('static', 'tables', tables.path + '.xlsx')  
-             print(excel_file_path)
              if os.path.isfile(excel_file_path):
                  excel_response = FileResponse(open(excel_file_path, 'rb'), as_attachment=True, filename=tables.path)
                  return excel_response
