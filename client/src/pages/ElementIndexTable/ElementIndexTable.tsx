@@ -23,7 +23,7 @@ const ElementIndexTable = () => {
   const [sheetData, setSheetData] = useState<any[][] | null>(null);
   const [editableData, setEditableData] = useState<any[][] | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [tableId , setTableId] = useState<number>(1)
+  const [tableId, setTableId] = useState<number>(1);
   const { data, isLoading } = useQuery(["getElementById", id], () =>
     fetchElementData(id)
   );
@@ -33,9 +33,9 @@ const ElementIndexTable = () => {
 
     if (data && data.tables && data.tables.length > 0) {
       // Map each table object to a promise that fetches the Excel file
-      
+
       const fetchPromises = data.tables.map((table: { id: number }) => {
-        setTableId(table.id)
+        setTableId(table.id);
         return fetchExcelFile(table.id);
       });
 
@@ -93,7 +93,6 @@ const ElementIndexTable = () => {
 
       // Set the parsed data in state
       setSheetData(excelData as any[][]);
-      setEditableData(excelData as any[][]);
     };
 
     reader.readAsBinaryString(file);
@@ -112,30 +111,27 @@ const ElementIndexTable = () => {
     rowIndex: number,
     cellIndex: number
   ) => {
-    // Создайте копию текущего состояния editableData
-    const updatedData = [...(editableData || [])];
+    // Создайте копию текущего состояния sheetData
+    const updatedData = [...(sheetData || [])];
 
     // Обновите значение ячейки в копии данных
     updatedData[rowIndex + 1][cellIndex] = newValue;
 
-    // Обновите состояние editableData
-    setEditableData(updatedData);
+    // Обновите состояние sheetData
+    setSheetData(updatedData);
   };
 
   const saveExcelData = () => {
-   
-    if (!editableData) {
-      
+    if (!sheetData) {
       console.error("Data is missing or incomplete.");
       return;
     }
-  
- 
+
     // Create a new Excel workbook
     const wb = XLSX.utils.book_new();
 
     // Create a new worksheet
-    const ws = XLSX.utils.aoa_to_sheet(editableData);
+    const ws = XLSX.utils.aoa_to_sheet(sheetData);
 
     // Add the worksheet to the workbook
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
@@ -164,7 +160,7 @@ const ElementIndexTable = () => {
       .catch((error) => {
         console.error("Error saving Excel data:", error);
       });
-      setIsEditing(!isEditing)
+    setIsEditing(!isEditing);
   };
 
   // Utility function to convert a string to an ArrayBuffer
@@ -179,53 +175,50 @@ const ElementIndexTable = () => {
   return (
     <div className="container">
       <div className="table-title">
-        <h2>Excel Data</h2>
         <h2> {data.name}</h2>
       </div>
       {isLoading && <div>Loading...</div>}
-      {editableData && editableData[0] ? (
+      {sheetData && sheetData[0] ? (
         <div className="table_container">
-
-<div className="table">
-          <div className="table_head">
-            <div className="table_row">
-              {editableData[0].map((header: string, index: number) => (
-                <div className="table_body_element" key={index}>
-                  {header}
+          <div className="table">
+            <div className="table_head">
+              <div className="table_row">
+                {sheetData[0].map((header: string, index: number) => (
+                  <div className="table_body_element" key={index}>
+                    {header}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="table_body">
+              {sheetData.slice(1).map((row: any[], rowIndex: number) => (
+                <div className="table_row" key={rowIndex}>
+                  {row.map((cell: any, cellIndex: number) => (
+                    <div className="table_body_element" key={cellIndex}>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={cell}
+                          onChange={(e) =>
+                            handleCellEdit(e.target.value, rowIndex, cellIndex)
+                          }
+                        />
+                      ) : (
+                        cell
+                      )}
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
           </div>
-          <div className="table_body">
-            {editableData.slice(1).map((row: any[], rowIndex: number) => (
-              <div className="table_row" key={rowIndex}>
-                {row.map((cell: any, cellIndex: number) => (
-                  <div className="table_body_element" key={cellIndex}>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={cell}
-                        onChange={(e) =>
-                          handleCellEdit(e.target.value, rowIndex, cellIndex)
-                        }
-                      />
-                    ) : (
-                      cell
-                    )}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
         </div>
-        </div>
-       
       ) : (
         <div>No data found.</div>
       )}
       {excelData && (
         <div className="links">
-          <a href={window.URL.createObjectURL(excelData)} download="test.xlsx">
+          <a href={window.URL.createObjectURL(excelData)} download={`${data.name}.xlsx`}>
             Download Excel File
           </a>
 
