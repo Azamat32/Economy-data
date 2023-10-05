@@ -1,4 +1,4 @@
-# Project Name
+# Economic data
 
 Brief project description here.
 
@@ -20,5 +20,6 @@ Follow these steps to set up and run the project on your local machine:
 1. Open a terminal and navigate to the `server` directory of your project.
 
 2. Install Python dependencies for the server:
-   `cd backend \n
-pip install -r requirements.txt`
+   ````cd backend  \n
+      pip install -r requirements.txt```
+   ````
