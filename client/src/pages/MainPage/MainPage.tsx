@@ -14,12 +14,9 @@ type TableTitles = {
 
 const MainPage = (_props: Props) => {
   const [tablesTitle, setTablesTitle] = useState<TableTitles[]>([]);
-  const [selectedId, setSelectedId] = useState<number>(
-    33
-  );
-    
+  const [selectedId, setSelectedId] = useState<number>(33);
+
   useEffect(() => {
-      
     fetchData();
   }, []);
 
@@ -39,22 +36,18 @@ const MainPage = (_props: Props) => {
   const queryClient = useQueryClient();
 
   const fetchTables = async (id: number) => {
-
     const response = await axios.get(
-      `http://127.0.0.1:8000/api/economic_indices/${id}`,
+      `http://127.0.0.1:8000/api/economic_indices/${id}`
     );
     return response.data;
   };
 
-  const {
-    isLoading,
-    data: fetchedTables,
-  } = useQuery(
+  const { isLoading, data: fetchedTables } = useQuery(
     ["fetchTables", selectedId],
 
     () => fetchTables(selectedId),
     {
-      enabled: true, // Initially, query is disabled
+      enabled: true,
 
       onError: (error) => {
         console.error("Error:", error);
@@ -83,7 +76,7 @@ const MainPage = (_props: Props) => {
         <div className="main_inner">
           <div className="table_titles">{tables}</div>
           <div className="table_links">
-            {isLoading ? ( // Use isLoading to conditionally render the loader
+            {isLoading ? ( 
               <Loader />
             ) : (
               fetchedTables &&
