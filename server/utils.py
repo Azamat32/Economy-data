@@ -232,22 +232,21 @@ def delete_all():
 
 def insert_topics(topics_data):
     for topic in topics_data:
-        insert_topic = Topic(name=topic)
+        insert_topic = Topic(name=topic[0], slug=topic[1])
         insert_topic.save()
 
 
 def insert_economic_indices(economic_indices):
     for index in economic_indices:
         topic = Topic.objects.get(name=index[2])
-        if not Economic_index.objects.filter(name=index[0]).exists():
-            insert_index = Economic_index(name=index[0], macro_topic=topic)
-            insert_index.save()
+        insert_index = Economic_index(name=index[0], slug=index[1], macro_topic=topic)
+        insert_index.save()
 
 
-def insert_tables(economic_indices):
-    for index in economic_indices:
-        economic_index = Economic_index.objects.get(name=index[0])
-        table = Table(path=index[1], macro_economic_index=economic_index)
+def insert_tables(table_info):
+    for table in table_info:
+        economic_index = Economic_index.objects.get(name=table[0])
+        table = Table(path=table[1], macro_economic_index=economic_index)
         table.save()
 
 
@@ -255,4 +254,4 @@ def update_topics():
     delete_all()
     insert_topics(topics_data)
     insert_economic_indices(economic_indices)
-    insert_tables(economic_indices)
+    insert_tables(table_info)

@@ -20,5 +20,5 @@ def main():
 
 
 if __name__ == '__main__':
-    # update_topics()
+    update_topics()
     main()
